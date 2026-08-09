@@ -34,7 +34,7 @@ export function AdminSidebar({ forceVisible = false }: { forceVisible?: boolean 
       <div className="flex h-16 items-center gap-2.5 border-b border-slate-800 px-6">
         <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white">
           <Image
-            src="/images/logo.jpeg"
+            src="/images/school-logo.jpeg"
             alt="Al Jannat Welfare School logo"
             fill
             className="object-contain p-0.5"

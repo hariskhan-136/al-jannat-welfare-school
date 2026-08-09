@@ -46,7 +46,7 @@ export function Navbar() {
         >
           <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-white shadow-glow">
             <Image
-              src="/images/logo.jpeg"
+              src="/images/school-logo.jpeg"
               alt={`${SITE.name} logo`}
               fill
               className="object-contain p-0.5"

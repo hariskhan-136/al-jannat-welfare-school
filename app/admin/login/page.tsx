@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
         <div className="mb-8 flex items-center gap-2.5">
           <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white">
             <Image
-              src="/images/logo.jpeg"
+              src="/images/school-logo.jpeg"
               alt={`${SITE.name} logo`}
               fill
               className="object-contain p-0.5"
