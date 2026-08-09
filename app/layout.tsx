@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { SITE } from "@/lib/constants";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
-  title: {
-    default: SITE.name,
-    template: `%s | ${SITE.name}`,
-  },
+  title: "Al Jannat Welfare School",
   description:
     "Al Jannat Welfare School Nowshera — quality education rooted in strong character.",
 };
@@ -18,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>{children}</body>
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }
