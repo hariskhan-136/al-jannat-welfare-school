@@ -1,0 +1,181 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum AdmissionStatus {
+  PENDING
+  REVIEWING
+  ACCEPTED
+  REJECTED
+}
+
+enum GalleryCategory {
+  CAMPUS
+  EVENTS
+  CLASSROOMS
+  SPORTS
+  LABS
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  EDITOR
+}
+
+model Admin {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         AdminRole @default(EDITOR)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("admins")
+}
+
+model Admission {
+  id                String          @id @default(cuid())
+  studentName       String
+  fatherName        String
+  motherName        String
+  dateOfBirth       DateTime
+  gender            Gender
+  classAppliedFor   String
+  parentPhone       String
+  parentEmail       String
+  address           String
+  studentPhotoUrl   String?
+  birthCertUrl      String?
+  status            AdmissionStatus @default(PENDING)
+  notes             String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("admissions")
+}
+
+model GalleryItem {
+  id         String          @id @default(cuid())
+  title      String
+  category   GalleryCategory
+  imageUrl   String
+  cloudinaryPublicId String?
+  caption    String?
+  order      Int             @default(0)
+  createdAt  DateTime        @default(now())
+
+  @@index([category])
+  @@map("gallery")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  imageUrl    String?
+  eventDate   DateTime
+  location    String?
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("events")
+}
+
+model News {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  summary     String
+  content     String
+  imageUrl    String?
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("news")
+}
+
+model SchoolClass {
+  id          String       @id @default(cuid())
+  name        String       @unique // e.g. "Nursery", "Class 1", "Class 10"
+  level       Int          // sort order / numeric level
+  section     String?      // e.g. "Primary", "Middle", "Matric"
+  subjects    Subject[]
+  fee         Fee?
+  syllabuses  Syllabus[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("classes")
+}
+
+model Subject {
+  id        String      @id @default(cuid())
+  name      String
+  classId   String
+  class     SchoolClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@index([classId])
+  @@map("subjects")
+}
+
+model Fee {
+  id            String      @id @default(cuid())
+  classId       String      @unique
+  class         SchoolClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+  admissionFee  Int
+  monthlyFee    Int
+  annualCharges Int         @default(0)
+  securityFee   Int         @default(0)
+  updatedAt     DateTime    @updatedAt
+
+  @@map("fees")
+}
+
+model Syllabus {
+  id        String      @id @default(cuid())
+  classId   String
+  class     SchoolClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+  title     String
+  fileUrl   String
+  createdAt DateTime    @default(now())
+
+  @@index([classId])
+  @@map("syllabuses")
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("messages")
+}
+
+model SiteContent {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g. "hero", "about", "stats", "mission"
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("site_content")
+}
