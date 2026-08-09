@@ -44,13 +44,14 @@ export function Navbar() {
           className="flex items-center gap-2.5"
           aria-label={`${SITE.name} — Home`}
         >
-          <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-white shadow-glow">
+          <span className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white shadow-glow">
             <Image
               src="/images/school-logo.jpeg"
               alt={`${SITE.name} logo`}
               fill
-              className="object-contain p-0.5"
+              className="object-cover"
               priority
+              sizes="44px"
             />
           </span>
           <span className="flex flex-col leading-none">

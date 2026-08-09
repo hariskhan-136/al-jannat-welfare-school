@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { SITE } from "@/lib/constants";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -32,12 +33,14 @@ export function AdminSidebar({ forceVisible = false }: { forceVisible?: boolean 
       )}
     >
       <div className="flex h-16 items-center gap-2.5 border-b border-slate-800 px-6">
-        <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white">
+        <span className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white shadow-glow">
           <Image
             src="/images/school-logo.jpeg"
-            alt="Al Jannat Welfare School logo"
+            alt={`${SITE.name} logo`}
             fill
-            className="object-contain p-0.5"
+            className="object-cover"
+            priority
+            sizes="44px"
           />
         </span>
         <span className="font-display text-sm font-bold text-white">Admin Panel</span>

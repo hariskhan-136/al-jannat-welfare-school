@@ -5,7 +5,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Loader2, Send } from "lucide-react";
+
 import { contactFormSchema, type ContactFormValues } from "@/lib/validations/contact";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,25 +24,48 @@ export function ContactForm() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ContactFormValues>({ resolver: zodResolver(contactFormSchema) });
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactFormSchema),
+  });
 
   const onSubmit = async (values: ContactFormValues) => {
     setServerError(null);
     setSubmitting(true);
+
     try {
-      const res = await fetch("/api/contact", {
+      const response = await fetch("https://formspree.io/f/xzepedyy", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: values.name,
+          email: values.email,
+          phone: values.phone || "",
+          subject: values.subject || "Website Inquiry",
+          message: values.message,
+        }),
       });
-      const json = await res.json();
-      if (!res.ok || !json.success) {
-        throw new Error(json.message ?? "Failed to send message.");
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data?.errors?.[0]?.message ||
+            data?.message ||
+            "Failed to send message. Please try again."
+        );
       }
+
       setSubmitted(true);
       reset();
-    } catch (err) {
-      setServerError(err instanceof Error ? err.message : "Something went wrong.");
+    } catch (error) {
+      console.error("Contact form submission failed:", error);
+
+      setServerError(
+        error instanceof Error ? error.message : "Something went wrong. Please try again."
+      );
     } finally {
       setSubmitting(false);
     }
@@ -56,13 +81,16 @@ export function ContactForm() {
         <span className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-600 text-white">
           <CheckCircle2 className="h-8 w-8" aria-hidden="true" />
         </span>
+
         <h3 className="mt-5 font-display text-xl font-bold text-foreground">
           Message sent!
         </h3>
+
         <p className="mt-2 max-w-md text-sm text-muted-foreground">
-          Thank you for reaching out. Our office will get back to you within one
-          working day.
+          Thank you for reaching out. Your message has been received. Our office will get
+          back to you within one working day.
         </p>
+
         <Button className="mt-6" onClick={() => setSubmitted(false)}>
           Send Another Message
         </Button>
@@ -77,62 +105,90 @@ export function ContactForm() {
       className="rounded-3xl border border-border bg-card p-6 shadow-soft-lg sm:p-8"
     >
       <div className="grid gap-6 sm:grid-cols-2">
+        {/* Full Name */}
         <div>
           <Label htmlFor="name">Full Name</Label>
+
           <Input
             id="name"
             placeholder="Your name"
             invalid={!!errors.name}
             className="mt-2"
+            autoComplete="name"
             {...register("name")}
           />
+
           {errors.name && (
-            <p className="mt-1.5 text-xs font-medium text-red-600">{errors.name.message}</p>
+            <p className="mt-1.5 text-xs font-medium text-red-600">
+              {errors.name.message}
+            </p>
           )}
         </div>
 
+        {/* Email */}
         <div>
           <Label htmlFor="email">Email</Label>
+
           <Input
             id="email"
             type="email"
             placeholder="you@example.com"
             invalid={!!errors.email}
             className="mt-2"
+            autoComplete="email"
             {...register("email")}
           />
+
           {errors.email && (
-            <p className="mt-1.5 text-xs font-medium text-red-600">{errors.email.message}</p>
+            <p className="mt-1.5 text-xs font-medium text-red-600">
+              {errors.email.message}
+            </p>
           )}
         </div>
 
+        {/* Phone */}
         <div>
           <Label htmlFor="phone">Phone (optional)</Label>
+
           <Input
             id="phone"
             type="tel"
             placeholder="03001234567"
             invalid={!!errors.phone}
             className="mt-2"
+            autoComplete="tel"
             {...register("phone")}
           />
+
           {errors.phone && (
-            <p className="mt-1.5 text-xs font-medium text-red-600">{errors.phone.message}</p>
+            <p className="mt-1.5 text-xs font-medium text-red-600">
+              {errors.phone.message}
+            </p>
           )}
         </div>
 
+        {/* Subject */}
         <div>
           <Label htmlFor="subject">Subject (optional)</Label>
+
           <Input
             id="subject"
             placeholder="e.g. Admission Inquiry"
             className="mt-2"
             {...register("subject")}
           />
+
+          {errors.subject && (
+            <p className="mt-1.5 text-xs font-medium text-red-600">
+              {errors.subject.message}
+            </p>
+          )}
         </div>
 
+        {/* Message */}
         <div className="sm:col-span-2">
           <Label htmlFor="message">Message</Label>
+
           <Textarea
             id="message"
             placeholder="How can we help?"
@@ -140,12 +196,16 @@ export function ContactForm() {
             className="mt-2 min-h-36"
             {...register("message")}
           />
+
           {errors.message && (
-            <p className="mt-1.5 text-xs font-medium text-red-600">{errors.message.message}</p>
+            <p className="mt-1.5 text-xs font-medium text-red-600">
+              {errors.message.message}
+            </p>
           )}
         </div>
       </div>
 
+      {/* Server/Formspree Error */}
       <AnimatePresence>
         {serverError && (
           <motion.p
@@ -162,14 +222,22 @@ export function ContactForm() {
         )}
       </AnimatePresence>
 
-      <Button type="submit" size="lg" disabled={submitting} className="mt-8 w-full sm:w-auto">
+      {/* Submit Button */}
+      <Button
+        type="submit"
+        size="lg"
+        disabled={submitting}
+        className="mt-8 w-full sm:w-auto"
+      >
         {submitting ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Sending...
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            Sending...
           </>
         ) : (
           <>
-            <Send className="h-4 w-4" aria-hidden="true" /> Send Message
+            <Send className="h-4 w-4" aria-hidden="true" />
+            Send Message
           </>
         )}
       </Button>

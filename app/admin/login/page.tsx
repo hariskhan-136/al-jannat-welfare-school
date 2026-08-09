@@ -24,13 +24,13 @@ export default function AdminLoginPage() {
 
       <div className="relative flex flex-col items-center">
         <div className="mb-8 flex items-center gap-2.5">
-          <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white">
+          <span className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white">
             <Image
               src="/images/school-logo.jpeg"
               alt={`${SITE.name} logo`}
               fill
-              sizes="40px"
-              className="object-contain p-0.5"
+              className="object-cover"
+              sizes="44px"
             />
           </span>
 
