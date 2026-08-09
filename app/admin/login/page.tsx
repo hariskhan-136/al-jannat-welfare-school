@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { Suspense } from "react";
+
 import { LoginForm } from "@/components/admin/login-form";
 import { SITE } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Admin Login",
-  robots: { index: false, follow: false },
+  description: `Admin login for ${SITE.name}.`,
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function AdminLoginPage() {
@@ -15,6 +21,7 @@ export default function AdminLoginPage() {
         className="pointer-events-none fixed inset-0 bg-star-pattern opacity-[0.04]"
         aria-hidden="true"
       />
+
       <div className="relative flex flex-col items-center">
         <div className="mb-8 flex items-center gap-2.5">
           <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white">
@@ -22,14 +29,19 @@ export default function AdminLoginPage() {
               src="/images/school-logo.jpeg"
               alt={`${SITE.name} logo`}
               fill
+              sizes="40px"
               className="object-contain p-0.5"
             />
           </span>
+
           <span className="font-display text-lg font-bold text-white">
             {SITE.shortName}
           </span>
         </div>
-        <LoginForm />
+
+        <Suspense fallback={null}>
+          <LoginForm />
+        </Suspense>
       </div>
     </div>
   );
